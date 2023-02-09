@@ -2,6 +2,7 @@ import dash
 from dash import Dash, html, dcc, Input, Output, State
 import pandas as pd
 import plotly.graph_objects as go
+import os
 
 # Font Awesome Icon's
 external_scripts = [{'src': 'https://kit.fontawesome.com/19f1c21c33.js',
@@ -60,7 +61,7 @@ app.callback(
 # Map
 
 # Access token
-token = open(".mapbox_token").read()
+token = os.environ['DB_PWD_TER']
 
 # Map layout
 map_layout = dict(
