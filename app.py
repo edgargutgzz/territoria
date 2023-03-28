@@ -87,7 +87,7 @@ app.callback(
 # Map
 
 # Access token
-token = os.environ['DB_PWD_TER']
+token = 'pk.eyJ1IjoianB6cDIwMDEiLCJhIjoiY2xmcmEzNnhyMDNjdDNycXQ0d3A2N3NjbyJ9.PUJ_q_U96vOQ94oli7JT6g'
 
 # Map layout
 map_layout = dict(
