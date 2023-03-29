@@ -3,6 +3,24 @@ from dash import Dash, html, dcc, Input, Output, State
 import pandas as pd
 import plotly.graph_objects as go
 import os
+import mariadb
+import sys
+
+# Connect to MariaDB Platform
+try:
+    conn = mariadb.connect(
+        user="usuario",
+        password="password",
+        host="localhost",
+        database="Georregias"
+
+    )
+except mariadb.Error as e:
+    print(f"Error connecting to MariaDB Platform: {e}")
+    sys.exit(1)
+
+# Get Cursor
+cur = conn.cursor()
 
 # Font Awesome Icon's
 external_scripts = [{'src': 'https://kit.fontawesome.com/19f1c21c33.js',
@@ -87,7 +105,7 @@ app.callback(
 # Map
 
 # Access token
-token = os.environ['DB_PWD_TER']
+token = 'pk.eyJ1IjoianB6cDIwMDEiLCJhIjoiY2xmcmEzNnhyMDNjdDNycXQ0d3A2N3NjbyJ9.PUJ_q_U96vOQ94oli7JT6g'
 
 # Map layout
 map_layout = dict(
@@ -107,15 +125,6 @@ map_layout = dict(
 # Estaciones de Metro
 estaciones_metro = pd.read_csv("assets/estaciones_metro.csv")
 
-# Reportes
-reportes = pd.read_csv("assets/reportes.csv")
-
-# Percepciones - Espacio inseguro y de peligro
-percepciones = pd.read_csv("assets/percepciones.csv")
-
-# Percepciones - Espacio seguro
-percepciones_seguro = pd.read_csv("assets/percepciones_seguro.csv")
-
 # Map - Callback
 def on_form_change(switches_value):
 
@@ -124,7 +133,7 @@ def on_form_change(switches_value):
 
     if switches_value == [1]:
         #print("passed through (1)")
-
+        
         estaciones_mapa = go.Figure(go.Scattermapbox(
             lon=estaciones_metro["longitud"],
             lat=estaciones_metro["latitud"],
@@ -132,18 +141,22 @@ def on_form_change(switches_value):
             hovertext=estaciones_metro["name"],
             hoverinfo="text"
         ))
-
+        
         estaciones_mapa.update_layout(map_layout)
-
+        
         return estaciones_mapa
 
     elif switches_value == [2]:
        #print("passed through (2)")
-
+       
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
         reportes_mapa = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 10, 'opacity': .3, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -162,10 +175,15 @@ def on_form_change(switches_value):
 
     elif switches_value == [3]:
         #print("passed through (3)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         percepciones_mapa = go.Figure(go.Scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         ))
@@ -176,10 +194,14 @@ def on_form_change(switches_value):
 
     elif switches_value == [4]:
         #print("passed through (4)")
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         percepciones_seguro_mapa = go.Figure(go.Scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         ))
@@ -190,12 +212,17 @@ def on_form_change(switches_value):
 
     elif switches_value == [1, 2] or switches_value == [2, 1]:
         #print("passed through (1, 2)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Estaciones + Reportes
         estaciones_reportes = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 10, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -220,11 +247,16 @@ def on_form_change(switches_value):
 
     elif switches_value == [1, 3] or switches_value == [3, 1]:
         #print("passed through (1, 3)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Estaciones + Percepciones
         estaciones_percepciones = go.Figure(go.Scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         ))
@@ -243,11 +275,16 @@ def on_form_change(switches_value):
 
     elif switches_value == [1, 4] or switches_value == [4, 1]:
         #print("passed through (1, 4)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Estaciones + Percepciones - Seguro
         estaciones_percepciones_seguro = go.Figure(go.Scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         ))
@@ -266,12 +303,17 @@ def on_form_change(switches_value):
 
     elif switches_value == [2, 3] or switches_value == [3, 2]:
         #print("passed through (2, 3)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Reportes + Percepciones
         reportes_percepciones = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 10, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -281,10 +323,15 @@ def on_form_change(switches_value):
                 'opacity': .3
             }
         ))
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         reportes_percepciones.add_scattermapbox(
-            lon = percepciones["longitud"],
-            lat = percepciones["latitud"],
+            lon = longitud,
+            lat = latitud,
             marker = {'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo = "none"
         )
@@ -295,12 +342,17 @@ def on_form_change(switches_value):
 
     elif switches_value == [2, 4] or switches_value == [4, 2]:
         #print("passed through (2-4)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Reportes + Percepciones - Seguro
         reportes_percepciones_seguro = go.Figure(go.Scattermapbox(
-            lon = reportes["longitud"],
-            lat = reportes["latitud"],
-            marker = {'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon = longitud,
+            lat = latitud,
+            marker = {'size': 12, 'opacity': .1, 'color': '#4974a5'},
             cluster = {
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -310,10 +362,15 @@ def on_form_change(switches_value):
                 'opacity': .3
             }
         ))
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         reportes_percepciones_seguro.add_scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         )
@@ -324,18 +381,28 @@ def on_form_change(switches_value):
 
     elif switches_value == [3, 4] or switches_value == [4, 3]:
         #print("passed through (3-4)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Ambas Percepciones
         percepciones_ambas = go.Figure(go.Scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         ))
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         percepciones_ambas.add_scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         )
@@ -347,12 +414,17 @@ def on_form_change(switches_value):
     elif switches_value == [1, 2, 3] or switches_value == [1, 3, 2] or switches_value == [2, 1, 3]\
             or switches_value == [2, 3, 1] or switches_value == [3, 1, 2] or switches_value == [3, 2, 1]:
         #print("passed through (1, 2, 3)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Estaciones + Reportes + Percepciones
         estaciones_reportes_percepciones = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -363,9 +435,14 @@ def on_form_change(switches_value):
             }
         ))
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         estaciones_reportes_percepciones.add_scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         )
@@ -386,11 +463,16 @@ def on_form_change(switches_value):
             or switches_value == [2, 4, 1] or switches_value == [4, 1, 2] or switches_value == [4, 2, 1]:
         #print("passed through (1, 2, 4)")
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         # Estaciones + Reportes + Percepciones - Seguro
         estaciones_reportes_percepciones_seguro = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -400,10 +482,15 @@ def on_form_change(switches_value):
                 'opacity': .3
             }
         ))
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         estaciones_reportes_percepciones_seguro.add_scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         )
@@ -425,17 +512,27 @@ def on_form_change(switches_value):
             or switches_value == [3, 4, 1] or switches_value == [4, 1, 3] or switches_value == [4, 3, 1]:
         #print("passed through (1, 3, 4)")
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         # Estaciones + Ambas Percepciones
         estaciones_percepciones_ambas = go.Figure(go.Scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         ))
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         estaciones_percepciones_ambas.add_scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         )
@@ -456,11 +553,16 @@ def on_form_change(switches_value):
             or switches_value == [3, 4, 2] or switches_value == [4, 2, 3] or switches_value == [4, 3, 2]:
         #print("passed through (2, 3, 4)")
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         # Reportes + Ambas Percepciones
         reportes_percepciones_ambas = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -471,16 +573,26 @@ def on_form_change(switches_value):
             }
         ))
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         reportes_percepciones_ambas.add_scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         )
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         reportes_percepciones_ambas.add_scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         )
@@ -491,12 +603,17 @@ def on_form_change(switches_value):
 
     elif len(switches_value) == 4:
         #print("passed though todas")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='911';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         # Mapa - Todas
         mapa_todas = go.Figure(go.Scattermapbox(
-            lon=reportes["longitud"],
-            lat=reportes["latitud"],
-            marker={'size': 0, 'opacity': .1, 'color': '#4974a5'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .1, 'color': '#4974a5'},
             cluster={
                 'enabled': True,
                 'size': [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 69, 78],
@@ -506,17 +623,27 @@ def on_form_change(switches_value):
                 'opacity': .3
             }
         ))
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='seguro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         mapa_todas.add_scattermapbox(
-            lon=percepciones_seguro["longitud"],
-            lat=percepciones_seguro["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#8bb77f'},
             hoverinfo="none"
         )
 
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
+        
         mapa_todas.add_scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
+            lon=longitud,
+            lat=latitud,
             marker={'size': 14, 'opacity': .7, 'color': '#A97BB5'},
             hoverinfo="none"
         )
@@ -535,11 +662,16 @@ def on_form_change(switches_value):
 
     elif len(switches_value) == 0:
         #print("passed through (0)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         placeholder = go.Figure(go.Scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
-            marker={'size': 0, 'opacity': .5, 'color': '#E2474B'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .5, 'color': '#E2474B'},
             hoverinfo="none"
         ))
 
@@ -559,3 +691,4 @@ app.callback(
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+conn.close()
