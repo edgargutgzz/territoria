@@ -662,11 +662,16 @@ def on_form_change(switches_value):
 
     elif len(switches_value) == 0:
         #print("passed through (0)")
+        
+        cur.execute("SELECT SUBSTRING_INDEX(location,',', 1) AS lat, SUBSTR(location, POSITION(',' IN  location)+2, LENGTH(location)) AS lon FROM Report WHERE type='peligro';")
+        myresult = cur.fetchall()
+        latitud = list(map(lambda x: x[0], myresult))
+        longitud = list(map(lambda x: x[1], myresult))
 
         placeholder = go.Figure(go.Scattermapbox(
-            lon=percepciones["longitud"],
-            lat=percepciones["latitud"],
-            marker={'size': 0, 'opacity': .5, 'color': '#E2474B'},
+            lon=longitud,
+            lat=latitud,
+            marker={'size': 12, 'opacity': .5, 'color': '#E2474B'},
             hoverinfo="none"
         ))
 
