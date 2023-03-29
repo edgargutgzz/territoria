@@ -125,15 +125,6 @@ map_layout = dict(
 # Estaciones de Metro
 estaciones_metro = pd.read_csv("assets/estaciones_metro.csv")
 
-# Reportes
-reportes = pd.read_csv("assets/reportes.csv")
-
-# Percepciones - Espacio inseguro y de peligro
-percepciones = pd.read_csv("assets/percepciones.csv")
-
-# Percepciones - Espacio seguro
-percepciones_seguro = pd.read_csv("assets/percepciones_seguro.csv")
-
 # Map - Callback
 def on_form_change(switches_value):
 
