@@ -7,7 +7,7 @@ dash.register_page(__name__, path="/")
 
 # Page layout
 
-layout = html.Div([
+layout = dbc.Container([
 
     # Navbar
     dbc.Navbar(
@@ -39,9 +39,8 @@ layout = html.Div([
         dbc.Col(
             html.Img(
                 src="assets/georregias_banner.jpg",
-                style={'height': '700px', 'width': '100%', 'object-fit': 'cover'}
-            ), 
-            lg=11
+                style={'height': '650px', 'width': '100%', 'object-fit': 'cover'}
+            )
         ),
         className="pt-1", 
         justify="center"
@@ -54,9 +53,8 @@ layout = html.Div([
                 "Somos una colectiva enfocada en urbanismo feminista y cultura de cuidados que busca promover"
                 " herramientas para que otras mujeres, de cualquier edad y origen,",
                 html.Strong(" puedan habitar la ciudad y los espacios públicos de manera segura.")
-            ], style={"font-size": "30px", 'text-align': 'center'}),
-        ], lg=10
-        )
+            ], style={"font-size": "24px", 'text-align': 'center'}), 
+        ], lg = 11)
     ],
         className="pt-5 pb-5",
         justify="center"
@@ -94,7 +92,6 @@ layout = html.Div([
                 className = "pt-3"
             ),
         ],  style={"background-color":"#F6F8FA", "text-align": "center"},
-            lg=11,
             className = "py-4"
 
         )

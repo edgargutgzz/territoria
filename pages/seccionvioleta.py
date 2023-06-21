@@ -11,6 +11,7 @@ dash.register_page(__name__, path="/seccionvioleta")
 
 layout = dbc.Container([
 
+    # Navbar
     dbc.Navbar(
         dbc.Container([
 
@@ -25,8 +26,8 @@ layout = dbc.Container([
 
             dbc.Collapse(
                 dbc.Nav([
-                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria")),
-                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta"))
+                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria", style={"font-size": "18px"})),
+                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta", style={"font-size": "18px"}))
                 ], className="ms-auto", navbar=True),
                 id="navbar-collapse", navbar=True,
             )
@@ -34,11 +35,13 @@ layout = dbc.Container([
         ]), color="#FFFFFF", dark=False,
     ),
 
+    # Banner photo
     dbc.Row(
-        dbc.Col(html.Img(src="assets/seccionvioleta_banner.jpg", className="img-fluid")),
+        dbc.Col(html.Img(src="assets/seccionvioleta_banner.jpg", className="img-fluid", style = {'height': '650px'})),
         className="pt-1", justify="center"
     ),
 
+    # Texto principal
     dbc.Row([
         dbc.Col([
             html.P([
@@ -50,52 +53,58 @@ layout = dbc.Container([
                 " recurrir."
             ]),
             html.P([
-                "Para leer la Sección Violeta haz ",
-                html.A(" click aquí", href="https://commons.wikimedia.org/wiki/File:Secci%C3%B3n_Violeta.pdf",
-                       style={"color": "#A777B1"}, target="_blank")
+                "Consulta la Sección Violeta ",
+                html.A(" aquí", href="https://commons.wikimedia.org/wiki/File:Secci%C3%B3n_Violeta.pdf",
+                       style={"color": "#A777B1"}, target="_blank"),
+                "."
             ])
             ,
-        ], style={"font-size": "22px"}, lg=11
-        )
+        ], style={"font-size": "24px", "text-align": "center"}, lg=11
+        ),
 
-    ], class_name="pt-4 pb-5", justify="center"
+    ],  className="pt-5 pb-5",
+        justify="center"
     ),
 
-    dbc.Row([
-        dbc.Col(
-            html.B("¿Quieres ayudarnos a generar espacios seguros para todas y todes?")
-        , style={"font-size": "20px"}, lg=11
-        )
-    ], class_name="pt-4 pb-2", justify="center", style={"background-color":"#F6F8FA", "text-align": "center"}
-    ),
-
+    # Footer
     dbc.Row([
         dbc.Col([
+            html.B(
+                "¿Quieres ayudarnos a generar espacios seguros para todas y todos?",
+                style={"font-size": "20px"}
+            ),  
             html.P(
-                "Envíanos un mensaje o correo y platiquemos 💜"
-            , style={"font-size": "18px"}
+                "Envíanos un mensaje y platiquemos 💜",
+                style={"font-size": "16px"},
+                className = "pt-4"
             ),
-            html.P([
-                "Instagram: ",
-                html.A(" georregias", href="https://www.instagram.com/georregias", style={"color": "#A777B1"},
-                       target="_blank")
-            ], style={"font-size": "16px"}
-            ),
-            html.P([
-                "Facebook: ",
-                html.A(" Georregias", href="https://www.facebook.com/Georregias", style={"color": "#A777B1"},
-                       target="_blank")
-            ], style={"font-size": "16px"}
+            html.Div([
+                html.A(
+                    html.Img(src="assets/instagram.png", height="28px"),
+                    href="https://www.instagram.com/georregias", target="_blank",
+                    style={'margin-right': '20px'}  
+                ),
+                html.A(
+                    html.Img(src="assets/facebook.png", height="28px"),
+                    href="https://www.facebook.com/Georregias", target="_blank"
+                )
+            ], 
+                style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center'},
+                className = "pt-1"
             ),
             html.P(
-                "Correo: georregias@gmail.com"
-                , style={"font-size": "16px"}
-            )
-        ], lg=11
-        )
+                "georregias@gmail.com",
+                style={"font-size": "16px"},
+                className = "pt-3"
+            ),
+        ],  style={"background-color":"#F6F8FA", "text-align": "center"},
+            className = "py-4"
 
-    ], class_name="pt-2 pb-3", justify="center", style={"background-color":"#F6F8FA", "text-align": "center"}
-    ),
+        )
+    ],
+        className="pt-2 pb-3",
+        justify="center"
+    )
 
 
 
