@@ -25,8 +25,8 @@ layout = html.Div([
 
             dbc.Collapse(
                 dbc.Nav([
-                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria")),
-                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta"))
+                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria", style={"font-size": "18px"})), 
+                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta", style={"font-size": "18px"})) 
                 ], className="ms-auto", navbar=True),
                 id="navbar-collapse", navbar=True,
             ),
@@ -34,10 +34,17 @@ layout = html.Div([
         ]), color="#FFFFFF", dark=False,
     ),
 
-    # Banner foto
+    # Banner photo
     dbc.Row(
-        dbc.Col(html.Img(src="assets/georregias_banner.jpg", className="img-fluid")),
-        className="pt-1", justify="center"
+        dbc.Col(
+            html.Img(
+                src="assets/georregias_banner.jpg",
+                style={'height': '700px', 'width': '100%', 'object-fit': 'cover'}
+            ), 
+            lg=11
+        ),
+        className="pt-1", 
+        justify="center"
     ),
 
     # Texto principal
@@ -47,32 +54,25 @@ layout = html.Div([
                 "Somos una colectiva enfocada en urbanismo feminista y cultura de cuidados que busca promover"
                 " herramientas para que otras mujeres, de cualquier edad y origen,",
                 html.Strong(" puedan habitar la ciudad y los espacios públicos de manera segura.")
-            ]),
-        ], style={"font-size": "32px"}, lg=10
+            ], style={"font-size": "30px", 'text-align': 'center'}),
+        ], lg=10
         )
     ],
-        class_name="pt-5 pb-5",
+        className="pt-5 pb-5",
         justify="center"
-    ),
-
-    # Footer - Title
-    dbc.Row(
-        dbc.Col(
-            html.B("¿Quieres ayudarnos a generar espacios seguros para todas y todos?"),
-            style={"font-size": "20px"},
-            lg=11
-        ),
-        class_name="pt-4 pb-2",
-        justify="center",
-        style={"background-color":"#F6F8FA", "text-align": "center"}
     ),
 
     # Footer - Content
     dbc.Row([
         dbc.Col([
+            html.B(
+                "¿Quieres ayudarnos a generar espacios seguros para todas y todos?",
+                style={"font-size": "20px"}
+            ),  
             html.P(
-                "Envíanos un mensaje y platiquemos 💜"
-            , style={"font-size": "18px"}
+                "Envíanos un mensaje y platiquemos 💜",
+                style={"font-size": "16px"},
+                className = "pt-4"
             ),
             html.Div([
                 html.A(
@@ -83,19 +83,24 @@ layout = html.Div([
                 html.A(
                     html.Img(src="assets/facebook.png", height="28px"),
                     href="https://www.facebook.com/Georregias", target="_blank"
-                ),
-            ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}),
+                )
+            ], 
+                style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center'},
+                className = "pt-1"
+            ),
             html.P(
                 "georregias@gmail.com",
                 style={"font-size": "16px"},
                 className = "pt-3"
             ),
-        ], lg=11
+        ],  style={"background-color":"#F6F8FA", "text-align": "center"},
+            lg=11,
+            className = "py-4"
+
         )
     ],
         className="pt-2 pb-3",
-        justify="center",
-        style={"background-color":"#F6F8FA", "text-align": "center"}
+        justify="center"
     )
 
 ])
