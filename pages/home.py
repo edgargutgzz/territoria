@@ -39,7 +39,7 @@ layout = dbc.Container([
         dbc.Col(
             html.Img(
                 src="assets/georregias_banner.jpg",
-                style={'height': '650px', 'width': '100%', 'object-fit': 'cover'}
+                style={'width': '100%', 'object-fit': 'cover'}
             )
         ),
         className="pt-1", 

@@ -37,7 +37,7 @@ layout = dbc.Container([
 
     # Banner photo
     dbc.Row(
-        dbc.Col(html.Img(src="assets/seccionvioleta_banner.jpg", className="img-fluid", style = {'height': '650px'})),
+        dbc.Col(html.Img(src="assets/seccionvioleta_banner.jpg", className="img-fluid")),
         className="pt-1", justify="center"
     ),
 
