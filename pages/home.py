@@ -7,7 +7,7 @@ dash.register_page(__name__, path="/")
 
 # Page layout
 
-layout = dbc.Container([
+layout = html.Div([
 
     # Navbar
     dbc.Navbar(
@@ -48,17 +48,17 @@ layout = dbc.Container([
                 " herramientas para que otras mujeres, de cualquier edad y origen,",
                 html.Strong(" puedan habitar la ciudad y los espacios públicos de manera segura.")
             ]),
-        ], style={"font-size": "22px"}, lg=11
+        ], style={"font-size": "32px"}, lg=10
         )
     ],
-        class_name="pt-4 pb-5",
+        class_name="pt-5 pb-5",
         justify="center"
     ),
 
     # Footer - Title
     dbc.Row(
         dbc.Col(
-            html.B("¿Quieres ayudarnos a generar espacios seguros para todas y todes?"),
+            html.B("¿Quieres ayudarnos a generar espacios seguros para todas y todos?"),
             style={"font-size": "20px"},
             lg=11
         ),
@@ -71,33 +71,31 @@ layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.P(
-                "Envíanos un mensaje o correo y platiquemos 💜"
+                "Envíanos un mensaje y platiquemos 💜"
             , style={"font-size": "18px"}
             ),
-            html.P([
-                "Instagram: ",
-                html.A(" georregias", href="https://www.instagram.com/georregias", style={"color": "#A777B1"},
-                       target="_blank")
-            ], style={"font-size": "16px"}
-            ),
-            html.P([
-                "Facebook: ",
-                html.A(" Georregias", href="https://www.facebook.com/Georregias", style={"color": "#A777B1"},
-                       target="_blank")
-            ], style={"font-size": "16px"}
-            ),
+            html.Div([
+                html.A(
+                    html.Img(src="assets/instagram.png", height="28px"),
+                    href="https://www.instagram.com/georregias", target="_blank",
+                    style={'margin-right': '20px'}  
+                ),
+                html.A(
+                    html.Img(src="assets/facebook.png", height="28px"),
+                    href="https://www.facebook.com/Georregias", target="_blank"
+                ),
+            ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}),
             html.P(
-                "Correo: georregias@gmail.com"
-                , style={"font-size": "16px"}
-            )
+                "georregias@gmail.com",
+                style={"font-size": "16px"},
+                className = "pt-3"
+            ),
         ], lg=11
         )
     ],
-        class_name="pt-2 pb-3",
+        className="pt-2 pb-3",
         justify="center",
         style={"background-color":"#F6F8FA", "text-align": "center"}
-    ),
+    )
 
-],
-    fluid=False
-)
+])
