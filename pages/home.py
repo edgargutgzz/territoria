@@ -60,7 +60,7 @@ layout = dbc.Container([
         justify="center"
     ),
 
-    # Footer - Content
+    # Footer
     dbc.Row([
         dbc.Col([
             html.B(

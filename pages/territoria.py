@@ -72,8 +72,8 @@ layout = html.Div([
 
             dbc.Collapse(
                 dbc.Nav([
-                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria")),
-                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta"))
+                    dbc.NavItem(dbc.NavLink("Territoria", href="/territoria", style={"font-size": "18px"})),
+                    dbc.NavItem(dbc.NavLink("Sección Violeta", href="/seccionvioleta", style={"font-size": "18px"}))
                 ], className="ms-auto", navbar=True),
                 id="navbar-collapse", navbar=True,
             )
@@ -117,8 +117,10 @@ layout = html.Div([
                         html.A(
                             "aquí",
                             href="https://drive.google.com/file/d/19SiUAV-BB0WWd54x-h_HUlszXqKOTKcN/view?usp=sharing",
-                            target="_blank"
+                            target="_blank",
+                            style={"color": "#A777B1"}
                         ),
+                        ".",
                         html.Hr(),
                     ]),
                     html.Div(switches_movil, id="radioitems-checklist-output")
@@ -150,8 +152,10 @@ layout = html.Div([
                 html.A(
                     "aquí",
                     href="https://drive.google.com/file/d/19SiUAV-BB0WWd54x-h_HUlszXqKOTKcN/view?usp=sharing",
-                    target="_blank"
+                    target="_blank",
+                    style={"color": "#A777B1"}
                 ),
+                ".",
                 html.Hr()
             ],
                 className = "px-4"
