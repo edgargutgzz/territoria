@@ -146,7 +146,7 @@ layout = dbc.Container([
                 className = "pt-3"
             ),
         ],  style={"background-color":"#F6F8FA", "text-align": "center"},
-            className = "py-4"
+            className = "py-4 px-4"
 
         )
     ],
