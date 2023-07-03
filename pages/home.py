@@ -119,7 +119,7 @@ layout = dbc.Container([
         dbc.Col([
             html.B(
                 "¿Quieres ayudarnos a generar espacios seguros para todas y todos?",
-                style={"font-size": "18px"}
+                style={"font-size": "16px"}
             ),  
             html.P(
                 "Envíanos un mensaje y platiquemos 💜",
