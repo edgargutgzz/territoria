@@ -46,17 +46,31 @@ layout = dbc.Container([
         justify="center"
     ),
 
-    # Texto principal
+    # Texto principal - Desktop
     dbc.Row([
         dbc.Col([
             html.P([
                 "Somos una colectiva enfocada en urbanismo feminista y cultura de cuidados que busca promover"
                 " herramientas para que otras mujeres, de cualquier edad y origen,",
                 html.Strong(" puedan habitar la ciudad y los espacios públicos de manera segura.")
-            ], style={"font-size": "24px", 'text-align': 'center'}), 
-        ], lg = 11)
+            ], style={"font-size": "26px", 'text-align': 'center'}), 
+        ], lg = 12)
     ],
-        className="pt-5 pb-5",
+        className="px-5 mx-4 pt-5 pb-5 d-none d-lg-block",
+        justify="center"
+    ),
+
+    # Texto principal - Mobile
+    dbc.Row([
+        dbc.Col([
+            html.P([
+                "Somos una colectiva enfocada en urbanismo feminista y cultura de cuidados que busca promover"
+                " herramientas para que otras mujeres, de cualquier edad y origen,",
+                html.Strong(" puedan habitar la ciudad y los espacios públicos de manera segura.")
+            ], style={"font-size": "22px", 'text-align': 'center'}), 
+        ], lg = 12)
+    ],
+        className="px-4 pt-5 pb-5 d-lg-none",
         justify="center"
     ),
 
